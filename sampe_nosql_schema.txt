@@ -1,0 +1,71 @@
+Database : formula_1
+Collection: constructors
+  Field: _id
+    Data-Type: ObjectId, Count: 208, Concpt-Type: cat, Unique: True, Null: False 
+  Field: constructorId
+    Data-Type: int, Count: 208, Concpt-Type: nominal-cat, Unique: True, Null: False 
+  Field: constructorRef
+    Data-Type: str, Count: 208, Concpt-Type: cat, Unique: True, Null: False 
+  Field: name
+    Data-Type: str, Count: 208, Concpt-Type: cat, Unique: True, Null: False 
+  Field: nationality
+    Data-Type: str, Count: 208, Concpt-Type: cat, Unique: False, Null: False 
+  Field: url
+    Data-Type: str, Count: 208, Concpt-Type: cat, Unique: False, Null: False 
+Collection: circuits
+  Field: _id
+    Data-Type: ObjectId, Count: 72, Concpt-Type: cat, Unique: True, Null: False 
+  Field: circuitId
+    Data-Type: int, Count: 72, Concpt-Type: ordinal-cat, Unique: True, Null: False 
+  Field: circuitRef
+    Data-Type: str, Count: 72, Concpt-Type: cat, Unique: True, Null: False 
+  Field: name
+    Data-Type: str, Count: 72, Concpt-Type: cat, Unique: True, Null: False 
+  Field: location
+    Data-Type: str, Count: 72, Concpt-Type: cat, Unique: False, Null: False 
+  Field: country
+    Data-Type: str, Count: 72, Concpt-Type: cat, Unique: False, Null: False 
+  Field: lat
+    Data-Type: float, Count: 72, Concpt-Type: num, Unique: False, Null: False Min: -34.9272, Max: 57.2653
+  Field: lng
+    Data-Type: float, Count: 72, Concpt-Type: num, Unique: False, Null: False Min: -118.189, Max: 138.927
+  Field: alt
+    Data-Type: NoneType, Count: 72, Concpt-Type: null, Unique: False, Null: True 
+  Field: url
+    Data-Type: str, Count: 72, Concpt-Type: cat, Unique: True, Null: False 
+Collection: constructorStandings
+  Field: _id
+    Data-Type: ObjectId, Count: 11836, Concpt-Type: cat, Unique: True, Null: False 
+  Field: constructorStandingsId
+    Data-Type: int, Count: 11836, Concpt-Type: nominal-cat, Unique: True, Null: False 
+  Field: raceId
+    Data-Type: int, Count: 11836, Concpt-Type: nominal-cat, Unique: False, Null: False 
+  Field: constructorId
+    Data-Type: int, Count: 11836, Concpt-Type: nominal-cat, Unique: False, Null: False 
+  Field: points
+    Data-Type: float, Count: 11836, Concpt-Type: num, Unique: False, Null: False Min: 0.0, Max: 765.0
+  Field: position
+    Data-Type: int, Count: 11836, Concpt-Type: nominal-cat, Unique: False, Null: False 
+  Field: positionText
+    Data-Type: str, Count: 11836, Concpt-Type: cat, Unique: False, Null: False 
+  Field: wins
+    Data-Type: int, Count: 11836, Concpt-Type: nominal-cat, Unique: False, Null: False 
+Collection: races
+  Field: _id
+    Data-Type: ObjectId, Count: 976, Concpt-Type: cat, Unique: True, Null: False 
+  Field: raceId
+    Data-Type: int, Count: 976, Concpt-Type: nominal-cat, Unique: True, Null: False 
+  Field: year
+    Data-Type: int, Count: 976, Concpt-Type: nominal-cat, Unique: False, Null: False 
+  Field: round
+    Data-Type: int, Count: 976, Concpt-Type: nominal-cat, Unique: False, Null: False 
+  Field: circuitId
+    Data-Type: int, Count: 976, Concpt-Type: nominal-cat, Unique: False, Null: False 
+  Field: name
+    Data-Type: str, Count: 976, Concpt-Type: cat, Unique: False, Null: False 
+  Field: date
+    Data-Type: str, Count: 976, Concpt-Type: cat, Unique: True, Null: False 
+  Field: time
+    Data-Type: str, Count: 976, Concpt-Type: cat, Unique: False, Null: True 
+  Field: url
+    Data-Type: str, Count: 976, Concpt-Type: cat, Unique: True, Null: False 
