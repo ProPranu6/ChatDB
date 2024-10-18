@@ -53,4 +53,4 @@ To run the project locally, follow these steps:
 
 2. **Installation:**
    ```bash
-   pip install pymongo mysql-connector-python fastapi fuzzywuzzy
+   pip install -r requirements.txt
