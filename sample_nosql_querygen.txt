@@ -1,94 +1,103 @@
-COUNT | GROUP BY
-	SELECT COUNT(*) FROM races GROUP BY url
-	SELECT COUNT(date) FROM races GROUP BY circuitId
-	SELECT COUNT(constructorId) FROM constructorStandings GROUP BY wins
-	SELECT COUNT(*) FROM constructors GROUP BY constructorRef
-	SELECT COUNT(_id) FROM constructors GROUP BY name
-	SELECT COUNT(name) FROM races GROUP BY date
-	SELECT COUNT(name) FROM constructors GROUP BY constructorRef
-	SELECT COUNT(name) FROM constructors GROUP BY url
+SUM | GROUP BY
+	SELECT SUM(points) FROM constructorStandings GROUP BY _id
+	SELECT SUM(points) FROM constructorStandings GROUP BY position
 	
 ----------------------------------------------------------------------------------------------------
-COUNT | 
-	SELECT COUNT(url) FROM constructors 
-	SELECT COUNT(nationality) FROM constructors 
-	SELECT COUNT(date) FROM races 
-	SELECT COUNT(constructorRef) FROM constructors 
-	SELECT COUNT(url) FROM races 
-	SELECT COUNT(*) FROM races 
-	SELECT COUNT(constructorId) FROM constructors 
-	SELECT COUNT(raceId) FROM races 
-	
-----------------------------------------------------------------------------------------------------
-COUNT | WHERE
-	SELECT COUNT(raceId) FROM constructorStandings WHERE points >= 15 
-	
-----------------------------------------------------------------------------------------------------
-COUNT | ORDER BY
-	SELECT COUNT(constructorId) FROM constructorStandings ORDER BY points
-	
-----------------------------------------------------------------------------------------------------
- | 
-	SELECT constructorRef FROM constructors 
-	SELECT position FROM constructorStandings 
-	SELECT year FROM races 
-	SELECT constructorId FROM constructorStandings 
-	SELECT lat FROM circuits 
-	SELECT url FROM races 
-	SELECT constructorId FROM constructors 
+SUM | 
+	SELECT SUM(points) FROM constructorStandings 
 	
 ----------------------------------------------------------------------------------------------------
  | GROUP BY
-	SELECT url FROM races GROUP BY circuitId
-	SELECT url FROM constructors GROUP BY url
-	SELECT round FROM races GROUP BY raceId
-	SELECT year FROM races GROUP BY year
-	SELECT raceId FROM races GROUP BY time
+	SELECT name FROM races GROUP BY name
+	SELECT round FROM races GROUP BY time
+	SELECT _id FROM constructors GROUP BY constructorRef
+	SELECT date FROM races GROUP BY name
+	SELECT constructorId FROM constructors GROUP BY _id
+	SELECT raceId FROM constructorStandings GROUP BY raceId
+	SELECT _id FROM constructorStandings GROUP BY _id
+	SELECT _id FROM constructors GROUP BY constructorId
+	SELECT nationality FROM constructors GROUP BY constructorRef
+	SELECT constructorStandingsId FROM constructorStandings GROUP BY raceId
+	
+----------------------------------------------------------------------------------------------------
+ | 
+	SELECT constructorId FROM constructorStandings 
+	SELECT url FROM races 
+	SELECT _id FROM races 
+	SELECT country FROM circuits 
+	SELECT round FROM races 
+	SELECT lat FROM circuits 
+	
+----------------------------------------------------------------------------------------------------
+ | WHERE
+	SELECT _id FROM races WHERE url != 'http://en.wikipedia.org/wiki/1954_Italian_Grand_Prix' 
+	SELECT circuitId FROM races WHERE time != '14:30:00' 
+	SELECT url FROM races WHERE date != '1989-10-01' 
+	SELECT constructorId FROM constructors WHERE url = 'http://en.wikipedia.org/wiki/Protos_(constructor)' 
 	
 ----------------------------------------------------------------------------------------------------
  | ORDER BY
-	SELECT circuitRef FROM circuits ORDER BY circuitId
-	
-----------------------------------------------------------------------------------------------------
-VARIANCE | GROUP BY
-	SELECT VARIANCE(lat) FROM circuits GROUP BY location
-	
-----------------------------------------------------------------------------------------------------
-VARIANCE | WHERE
-	SELECT VARIANCE(alt) FROM circuits WHERE lat > -1 
+	SELECT lng FROM circuits ORDER BY alt
 	
 ----------------------------------------------------------------------------------------------------
 VARIANCE | 
-	SELECT VARIANCE(alt) FROM circuits 
+	SELECT VARIANCE(points) FROM constructorStandings 
 	
 ----------------------------------------------------------------------------------------------------
-VARIANCE | ORDER BY
-	SELECT VARIANCE(points) FROM constructorStandings ORDER BY points
+AVG | GROUP BY
+	SELECT AVG(points) FROM constructorStandings GROUP BY constructorId
 	
 ----------------------------------------------------------------------------------------------------
-STDDEV | ORDER BY
-	SELECT STDDEV(alt) FROM circuits ORDER BY alt
+AVG | ORDER BY
+	SELECT AVG(alt) FROM circuits ORDER BY lat
+	
+----------------------------------------------------------------------------------------------------
+AVG | WHERE
+	SELECT AVG(lng) FROM circuits WHERE url = 'http://en.wikipedia.org/wiki/Pescara_Circuit' 
+	
+----------------------------------------------------------------------------------------------------
+AVG | 
+	SELECT AVG(lng) FROM circuits 
 	
 ----------------------------------------------------------------------------------------------------
 STDDEV | 
 	SELECT STDDEV(points) FROM constructorStandings 
+	SELECT STDDEV(alt) FROM circuits 
 	
 ----------------------------------------------------------------------------------------------------
-AVG | GROUP BY
-	SELECT AVG(alt) FROM circuits GROUP BY location
-	SELECT AVG(lat) FROM circuits GROUP BY _id
-	SELECT AVG(points) FROM constructorStandings GROUP BY positionText
+COUNT | GROUP BY
+	SELECT COUNT(constructorRef) FROM constructors GROUP BY constructorId
+	SELECT COUNT(_id) FROM constructors GROUP BY nationality
+	SELECT COUNT(raceId) FROM constructorStandings GROUP BY wins
+	SELECT COUNT(*) FROM constructors GROUP BY url
 	
 ----------------------------------------------------------------------------------------------------
-AVG | 
-	SELECT AVG(points) FROM constructorStandings 
+COUNT | 
+	SELECT COUNT(*) FROM circuits 
+	SELECT COUNT(nationality) FROM constructors 
+	SELECT COUNT(raceId) FROM races 
+	SELECT COUNT(constructorId) FROM constructors 
+	SELECT COUNT(year) FROM races 
+	SELECT COUNT(_id) FROM constructors 
+	SELECT COUNT(name) FROM races 
+	SELECT COUNT(*) FROM constructors 
 	
 ----------------------------------------------------------------------------------------------------
-MAX | 
-	SELECT MAX(circuitId) FROM circuits 
+COUNT | WHERE
+	SELECT COUNT(raceId) FROM races WHERE name = 'Luxembourg Grand Prix' 
+	SELECT COUNT(constructorId) FROM constructors WHERE nationality != 'Brazilian' 
 	
 ----------------------------------------------------------------------------------------------------
-MIN | 
-	SELECT MIN(points) FROM constructorStandings 
+COUNT | ORDER BY
+	SELECT COUNT(lat) FROM circuits ORDER BY alt
+	SELECT COUNT(*) FROM circuits ORDER BY alt
+	
+----------------------------------------------------------------------------------------------------
+MEDIAN | WHERE
+	SELECT MEDIAN(lng) FROM circuits WHERE lat >= -3 
+	
+----------------------------------------------------------------------------------------------------
+MAX | GROUP BY
+	SELECT MAX(alt) FROM circuits GROUP BY country
 	
 ----------------------------------------------------------------------------------------------------
