@@ -1,0 +1,15 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "hero_id": {
+        "type": "integer"
+      },
+      "power_id": {
+        "type": "integer"
+      }
+    },
+    "required": ["hero_id", "power_id"]
+  }
+}
