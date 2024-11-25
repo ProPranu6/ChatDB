@@ -1,0 +1,20 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "Currency": {
+        "type": "string",
+        "enum": ["EUR", "CZK"]
+      },
+      "CustomerID": {
+        "type": "integer"
+      },
+      "Segment": {
+        "type": "string",
+        "enum": ["SME", "LAM", "KAM"]
+      }
+    },
+    "required": ["Currency", "CustomerID", "Segment"]
+  }
+}
