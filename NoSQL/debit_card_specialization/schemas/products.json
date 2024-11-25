@@ -1,0 +1,28 @@
+{
+  "Description": [
+    200,
+    "str",
+    "cat",
+    "non-unique",
+    "non-null",
+    -1,
+    -1,
+    [
+      "Rucní zadání",
+      "Nafta",
+      "Special",
+      "Super",
+      "Natural"
+    ]
+  ],
+  "ProductID": [
+    200,
+    "int",
+    "ordinal-cat",
+    "unique",
+    "non-null",
+    1,
+    200,
+    []
+  ]
+}
