@@ -1,0 +1,22 @@
+{
+  "hero_id": [
+    200,
+    "int",
+    "ordinal-cat",
+    "non-unique",
+    "non-null",
+    1,
+    200,
+    []
+  ],
+  "power_id": [
+    200,
+    "int",
+    "ordinal-cat",
+    "non-unique",
+    "non-null",
+    1,
+    145,
+    []
+  ]
+}
