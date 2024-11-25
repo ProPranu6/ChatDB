@@ -1,0 +1,48 @@
+{
+  "ChainID": [
+    200,
+    "int",
+    "cat",
+    "non-unique",
+    "non-null",
+    1,
+    36,
+    []
+  ],
+  "Country": [
+    200,
+    "str",
+    "cat",
+    "non-unique",
+    "non-null",
+    -1,
+    -1,
+    ["CZE"]
+  ],
+  "GasStationID": [
+    200,
+    "int",
+    "ordinal-cat",
+    "unique",
+    "non-null",
+    44,
+    200,
+    []
+  ],
+  "Segment": [
+    200,
+    "str",
+    "cat",
+    "non-unique",
+    "non-null",
+    -1,
+    -1,
+    [
+      "Value for money",
+      "Premium",
+      "Other",
+      "Noname",
+      "Discount"
+    ]
+  ]
+}
