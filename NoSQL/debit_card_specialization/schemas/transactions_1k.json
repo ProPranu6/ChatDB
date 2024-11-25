@@ -1,0 +1,92 @@
+{
+  "Amount": [
+    1000,
+    "int",
+    "num",
+    "non-unique",
+    "non-null",
+    0,
+    264,
+    []
+  ],
+  "CardID": [
+    1000,
+    "int",
+    "cat",
+    "non-unique",
+    "non-null",
+    99745,
+    753582,
+    []
+  ],
+  "CustomerID": [
+    1000,
+    "int",
+    "cat",
+    "non-unique",
+    "non-null",
+    7626,
+    49788,
+    []
+  ],
+  "Date": [
+    1000,
+    "str",
+    "date",
+    "non-unique",
+    "non-null",
+    "2012-08-23",
+    "2012-08-24",
+    []
+  ],
+  "GasStationID": [
+    1000,
+    "int",
+    "cat",
+    "non-unique",
+    "non-null",
+    48,
+    3869,
+    []
+  ],
+  "Price": [
+    1000,
+    "float",
+    "num",
+    "non-unique",
+    "non-null",
+    15.41,
+    5762.49,
+    []
+  ],
+  "ProductID": [
+    1000,
+    "int",
+    "cat",
+    "non-unique",
+    "non-null",
+    2,
+    23,
+    []
+  ],
+  "Time": [
+    1000,
+    "str",
+    "time",
+    "non-unique",
+    "non-null",
+    "03:53:00",
+    "23:59:00",
+    []
+  ],
+  "TransactionID": [
+    1000,
+    "int",
+    "ordinal-cat",
+    "unique",
+    "non-null",
+    1,
+    1000,
+    []
+  ]
+}
