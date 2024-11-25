@@ -3,10 +3,14 @@ from warnings import filterwarnings
 filterwarnings('ignore')
 
 class NoSQLTestCases:
-    def __init__(self, db_name='formula_1', max_sample=3):
+    #changed default db_name to 'default'
+    def __init__(self, db_name='default', max_sample=3):
         self.db_name = db_name
         self.schema_description=data_explore(f'NoSQL/{db_name}', print_schema=False)
         self.max_sample = max_sample
+
+    #creating options for multiple databases
+    if self.db_name == 'formula_1':
         self.t = [
     # constructorStandings
     ("constructorStandings", "Fetch the minimum points from constructorStandings, grouped by constructorStandingsId."),
@@ -26,7 +30,24 @@ class NoSQLTestCases:
     ("races", "Get year from races."),
     ("races", "Fetch round from races.")
 ]
+    elif self.db_name == 'debit_card_specialization':
+        self.t = [
+            #customers
+            ("customers","Fetch unique values of CustomerID from customers where Segment = 'SME'."),
+            ("customers", "Fetch unique values of CustomerID from customers where Currency = 'EUR'."),
 
+            #gasstations
+            ("gasstations","Fetch unique values of ChainID from gasstations where Segment = 'Premium'."),
+            ("gasstations","Get unique values of GasStationID from gasstations where Country = 'CZE'."),
+
+            #products
+            ("products","Get Description from products where ProductID = 5."),
+
+            #transactions_1k
+            ("transactions_1k","Fetch the minimum Price from transactions_1k."),
+            ("transactions_1k","Fetch the variance in Amount from transactions_1k where Price >100."),
+            ("transactions_1k","Get CardID from transactions_1k.")
+        ]
         
     def __call__(self, t):
         print("#"*100)
@@ -58,10 +79,12 @@ class NoSQLTestCases:
             return []
         
 class SQLTestCases:
-    def __init__(self, db_name='thrombosis_prediction', max_sample=3):
+    #changed default db name to default
+    def __init__(self, db_name='default', max_sample=3):
         self.db_name = db_name
         self.schema_description=data_explore(f'SQL/{db_name}', print_schema=False)
         self.max_sample = max_sample
+    if self.db_name == 'thrombosis_prediction':
         self.t = [
     # Examination table
     ("Examination", "Get the average of ANA where Thrombosis = 1 from Examination."),
@@ -85,6 +108,19 @@ class SQLTestCases:
     ("Patient", "Fetch all non-null Description values where PatientID = 1124385 from Patient.")
 
 ]
+    elif self.db_name == 'superhero':
+        self.t = [
+
+            #superhero table
+            ("superhero","Fetch superhero_name values from superhero where full_name = 'Charles Chandler'."),
+            ("superhero", "Get all unique values of full_name where gender_id = 1 from superhero"),
+            ("superhero", "Fetch superhero_name values where heigh_cm > 190 from superhero."),
+
+            #race table
+            
+
+            
+        ]
    
     def __call__(self, t):
         print("#"*100)
