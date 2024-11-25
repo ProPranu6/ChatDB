@@ -1,0 +1,32 @@
+{
+  "Currency": [
+    1100,
+    "str",
+    "cat",
+    "non-unique",
+    "non-null",
+    -1,
+    -1,
+    ["EUR", "CZK"]
+  ],
+  "CustomerID": [
+    1100,
+    "int",
+    "ordinal-cat",
+    "unique",
+    "non-null",
+    3,
+    1103,
+    []
+  ],
+  "Segment": [
+    1100,
+    "str",
+    "cat",
+    "non-unique",
+    "non-null",
+    -1,
+    -1,
+    ["SME", "LAM", "KAM"]
+  ]
+}
