@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatDB: Database and Query Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e; /* Dark background */
+            color: #e0e0e0; /* Light text */
+        }
+
+        header {
+            background-color: #343541; /* Dark header */
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            margin: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: #2e2e2e; /* Dark background for chat container */
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #chat-box {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+            background-color: #333333; /* Darker message background */
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            text-align: right;
+            color: #e0e0e0; /* Light text for user messages */
+        }
+
+        .bot-message {
+            text-align: left;
+            color: #d3d3d3; /* Light grey for bot message */
+        }
+
+        #chat-input {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border-top: 1px solid #444;
+            background-color: #2e2e2e; /* Dark background for input */
+        }
+
+        #chat-input input,
+        #chat-input select,
+        #chat-input button {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #444; /* Dark input fields */
+            color: #e0e0e0; /* Light text for input */
+        }
+
+        #chat-input button {
+            background-color: #555; /* Light grey button */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #chat-input button:hover {
+            background-color: #666; /* Darker grey on hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ChatDB</h1>
+    </header>
+
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <div id="chat-input">
+            <input type="text" id="user-query" placeholder="Ask a question or upload a database file..." />
+            <div>
+                <select id="dbType">
+                    <option value="nosql">NoSQL</option>
+                    <option value="sql">SQL</option>
+                </select>
+                <input type="file" id="dbFile" />
+                <button onclick="handleFileUpload()">Upload Database</button>
+            </div>
+            <button onclick="sendMessage()">Send Query</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+        let currentDbType = null; // Variable to store the current database type
+        let uploadedFileName = ""; // Variable to store the uploaded file's name without extension
+    
+        // Append messages to the chatbox
+        function appendMessage(message, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+    
+    // Check if the word "Data" is in the message
+    if (message.includes("Data")) {
+        // Add two line breaks before the word "Data"
+        messageDiv.innerText = message.replace(/(Data)/, '\n\n$1');
+    } else {
+        messageDiv.innerText = message;
+    }
+    
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+    
+        // Handle database file upload
+        async function handleFileUpload() {
+            const dbType = document.getElementById("dbType").value;
+            const dbFile = document.getElementById("dbFile").files[0];
+    
+            if (!dbFile) {
+                appendMessage("Please select a file to upload.", "bot");
+                return;
+            }
+    
+            // Extract filename without extension
+            const fileName = dbFile.name.split('.').slice(0, -1).join('.');
+            uploadedFileName = fileName; // Save filename for use in db_path
+    
+            const uploadUrl = dbType === "nosql" ? "/upload/nosql" : "/upload/sql";
+            const formData = new FormData();
+            formData.append("file", dbFile);
+    
+            appendMessage(`Uploading ${dbFile.name} as ${dbType} database...`, "bot");
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: "POST",
+                    body: formData,
+                });
+    
+                // Parse the JSON response
+                const result = await response.json();
+    
+                // Display the returned message
+                if (result.message) {
+                    appendMessage(result.message, "bot");
+                } else {
+                    appendMessage("Upload successful, but no message returned.", "bot");
+                }
+    
+                // Display the list of databases (if provided)
+                if (result.databases) {
+                    appendMessage(`Available ${dbType} databases: ${result.databases.join(", ")}`, "bot");
+                }
+    
+                currentDbType = dbType; // Update the current database type
+            } catch (error) {
+                appendMessage("Error: Upload failed!", "bot");
+            }
+        }
+    
+        // Handle sending a natural language query
+        async function sendMessage() {
+    const queryInput = document.getElementById("user-query");
+    const userMessage = queryInput.value.trim();
+
+    if (!userMessage) {
+        appendMessage("Please enter a query.", "bot");
+        return;
+    }
+
+    if (!currentDbType || !uploadedFileName) {
+        appendMessage("Please upload a database first.", "bot");
+        return;
+    }
+
+    appendMessage(userMessage, "user");
+    queryInput.value = ""; // Clear the input field
+
+    appendMessage("Processing your query...", "bot");
+
+    try {
+        const endpoint = currentDbType === "nosql" ? "/query/nosql" : "/query/sql";
+
+        // Ensure db_path and table are strings
+        const dbPath = `${currentDbType.toUpperCase()}/${String(uploadedFileName)}`;
+        const tableName = extractTableName(userMessage);
+
+        // Prepare the payload
+        const payload = {
+            db_path: dbPath, // Ensure this is a string
+            table: tableName, // Ensure this is a string
+            query: userMessage, // User's query
+        };
+
+        // Log payload for debugging
+        console.log("Payload to be sent:", payload);
+
+        // Send the query and other data to the server
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        // Parse the JSON response
+        const result = await response.json();
+
+        if (result.message) {
+            appendMessage(JSON.stringify(result.message), "bot");
+        } else {
+            appendMessage("Query processed successfully, but no message returned.", "bot");
+        }
+    } catch (error) {
+        console.error("Error during query processing:", error);
+        appendMessage("Error: Could not process the query. Please try again.", "bot");
+    }
+}
+
+
+    
+        // Extract table name from the query
+        function extractTableName(query) {
+            const fromIndex = query.toLowerCase().indexOf("from");
+            if (fromIndex !== -1) {
+                // Get the word after "from"
+                const tableName = query.slice(fromIndex + 4).trim().split(" ")[0];
+                return tableName;
+            }
+            return ""; // Return an empty string if "from" is not found
+        }
+    </script>
+</body>
+</html>

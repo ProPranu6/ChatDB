@@ -1,0 +1,182 @@
+/* static/style.css */
+
+/* Reset some basic elements */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e2f; /* Dark background similar to ChatGPT */
+    color: #eaeaea; /* Light text color for better readability */
+    line-height: 1.6;
+    height: 100vh; /* Full height for the body */
+}
+
+h1 {
+    font-size: 24px;
+    color: #d1d5db; /* Soft light gray */
+    text-align: center;
+    margin-top: 20px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #9ca3af; /* Softer gray for subheadings */
+}
+
+.chat-section {
+    flex: 1; /* Allow chat section to take available space */
+    overflow-y: auto; /* Enable scrolling for long messages */
+    margin-bottom: 10px; /* Space below chat section */
+}
+
+.chat-history {
+    background-color: #2a2a3d; /* Darker background for chat history */
+    border-radius: 8px;
+    padding: 12px;
+    height: 300px; /* Fixed height for chat history */
+    overflow-y: auto; /* Enable scrolling for long chat history */
+}
+
+.chat-message {
+    margin-bottom: 10px; /* Space between messages */
+    padding: 8px;
+    border-radius: 8px; /* Rounded corners for messages */
+    max-width: 80%; /* Max width for messages */
+    word-wrap: break-word; /* Break long words */
+}
+
+.user-message {
+    background-color: #10a37f; /* Teal for user messages */
+    color: white;
+    align-self: flex-end; /* Align user messages to the right */
+}
+
+.bot-message {
+    background-color: #3f3f46; /* Darker color for bot messages */
+    color: white;
+    align-self: flex-start; /* Align bot messages to the left */
+}
+
+textarea {
+    width: 100%;
+    border: 1px solid #3f3f46; /* Border matching the dark theme */
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    background: #2a2a3d; /* Darker background for input areas */
+    color: #eaeaea;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    resize: none; /* Prevent resizing */
+    margin-top: 10px; /* Space above textarea */
+}
+
+button {
+    background-color: #10a37f; /* Teal color for primary buttons */
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* Space above button */
+    margin-left: 5px; /* Space between buttons */
+}
+
+button:hover {
+    background-color: #0e8c6a; /* Darker teal on hover */
+}
+
+pre {
+    background-color: #2a2a3d; /* Darker background for output areas */
+    border-radius: 8px;
+    padding: 12px;
+    color: #eaeaea; /* Light text for readability */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #1f1f2e; /* Slightly lighter dark background */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: flex-start; /* Align items at the start */
+    height: calc(100% - 40px); /* Adjust for header spacing */
+}
+
+.input-section {
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack inputs and buttons */
+    margin-top: 20px; /* Space above input section */
+}
+
+.input-wrapper {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center align items vertically */
+    margin-bottom: 15px; /* Space between each file input section */
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-right: 10px; /* Space between icon and textarea */
+}
+
+.file-name {
+    margin-right: 10px; /* Space between file name and textarea */
+    color: #eaeaea; /* Color for the file name text */
+}
+
+textarea {
+    flex: 1; /* Allow textarea to take available space */
+}
+
+/* Style for the table selection dropdown */
+#tableSelect {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #2a2a3d; /* Match the theme */
+    border: 1px solid #3f3f46;
+    color: #eaeaea;
+    font-size: 14px;
+    margin-top: 10px; /* Space above the dropdown */
+}
+
+/* Scrollbar styling for a more custom look */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #3f3f46;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #52525b;
+}
+
+/* Custom styling for the select dropdown when user selects a table */
+#tableSelect:focus {
+    outline: none;
+    border-color: #10a37f; /* Highlight with teal */
+}
+
+/* Hide the chat section if there's no query yet */
+#dbQuerySection {
+    display: none;
+}
+
+/* Add spacing between the query input and the button */
+#queryInput {
+    margin-top: 10px; /* Space above textarea */
+}
