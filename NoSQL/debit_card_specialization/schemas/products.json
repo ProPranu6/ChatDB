@@ -1,0 +1,15 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "Description": {
+        "type": "string"
+      },
+      "ProductID": {
+        "type": "integer"
+      }
+    },
+    "required": ["Description", "ProductID"]
+  }
+}
