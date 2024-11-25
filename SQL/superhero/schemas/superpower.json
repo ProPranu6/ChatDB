@@ -1,0 +1,33 @@
+{
+  "id": [
+    167,
+    "int",
+    "ordinal-cat",
+    "unique",
+    "non-null",
+    1,
+    167,
+    []
+  ],
+  "power_name": [
+    167,
+    "str",
+    "cat",
+    "non-unique",
+    "non-null",
+    -1,
+    -1,
+    [
+      "Agility",
+      "Accelerated Healing",
+      "Lantern Power Ring",
+      "Dimensional Awareness",
+      "Cold Resistance",
+      "Durability",
+      "Stealth",
+      "Energy Absorption",
+      "Flight",
+      "Danger Sense"
+    ]
+  ]
+}
