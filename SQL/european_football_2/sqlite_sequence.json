@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Team",
+        "seq": 103916
+    },
+    {
+        "name": "Country",
+        "seq": 51958
+    },
+    {
+        "name": "League",
+        "seq": 51958
+    },
+    {
+        "name": "Player",
+        "seq": 11075
+    },
+    {
+        "name": "Player_Attributes",
+        "seq": 183978
+    },
+    {
+        "name": "Team_Attributes",
+        "seq": 1458
+    },
+    {
+        "name": "Match",
+        "seq": 25979
+    }
+]

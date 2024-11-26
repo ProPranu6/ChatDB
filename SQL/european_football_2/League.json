@@ -1,0 +1,57 @@
+[
+    {
+        "country_id": 1,
+        "id": 1,
+        "name": "Belgium Jupiler League"
+    },
+    {
+        "country_id": 1729,
+        "id": 1729,
+        "name": "England Premier League"
+    },
+    {
+        "country_id": 4769,
+        "id": 4769,
+        "name": "France Ligue 1"
+    },
+    {
+        "country_id": 7809,
+        "id": 7809,
+        "name": "Germany 1. Bundesliga"
+    },
+    {
+        "country_id": 10257,
+        "id": 10257,
+        "name": "Italy Serie A"
+    },
+    {
+        "country_id": 13274,
+        "id": 13274,
+        "name": "Netherlands Eredivisie"
+    },
+    {
+        "country_id": 15722,
+        "id": 15722,
+        "name": "Poland Ekstraklasa"
+    },
+    {
+        "country_id": 17642,
+        "id": 17642,
+        "name": "Portugal Liga ZON Sagres"
+    },
+    {
+        "country_id": 19694,
+        "id": 19694,
+        "name": "Scotland Premier League"
+    },
+    {
+        "country_id": 21518,
+        "id": 21518,
+        "name": "Spain LIGA BBVA"
+    },
+    {
+        "country_id": 24558,
+        "id": 24558,
+        "name": "Switzerland Super League"
+    }
+]
