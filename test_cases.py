@@ -1,13 +1,14 @@
-from engine import client, data_explore, get_parser, generate_sql, restructure_query, parse_tree_to_sql, query_sql, query_nosql, SQLToMongoConverter
+from engine import client, data_explore, get_parser, generate_sql, restructure_query, parse_tree_to_sql, query_sql, query_nosql, SQLToMongoConverter, _split_ignore_quoticks as tokenizer
 from warnings import filterwarnings
 filterwarnings('ignore')
 
 class NoSQLTestCases:
     #changed default db_name to 'default'
-    def __init__(self, db_name='default', max_sample=3):
+    def __init__(self, db_name='default', max_sample=3, debug=True):
         self.db_name = db_name
         self.schema_description=data_explore(f'NoSQL/{db_name}', print_schema=False)
         self.max_sample = max_sample
+        self.debug = debug
 
         #creating options for multiple databases
         if self.db_name == 'formula_1':
@@ -33,7 +34,7 @@ class NoSQLTestCases:
         elif self.db_name == 'debit_card_specialization':
             self.t = [
                 #customers
-                ("customers","Fetch unique values of CustomerID from customers where Segment = 'SME'."),
+                ("customers","Fetch unique values of CustomerID from Customers where segment = 'SME'."),
                 ("customers", "Fetch unique values of CustomerID from customers where Currency = 'EUR'."),
 
                 #gasstations
@@ -45,26 +46,24 @@ class NoSQLTestCases:
 
                 #transactions_1k
                 ("transactions_1k","Fetch the minimum Price from transactions_1k."),
-                ("transactions_1k","Fetch the variance in Amount from transactions_1k where Price >100."),
+                ("transactions_1k","Fetch the variance in Amount from transactions_1k where Price > 100."),
                 ("transactions_1k","Get CardID from transactions_1k.")
             ]
         elif self.db_name == 'california_schools':
             self.t = [
-                ("satscores", "Get the AvgScrMath where cds = '1100170000000' from Schools."),
-                ("satscores", "Retrieve the NumTstTakr where sname = 'FAME Public Charter' in Schools."),
-                ("satscores", "Fetch unique cds values from Schools."),
-                ("satscores", "Fetch distinct rtype where AvgScrRead > 500 in Schools."),
-
-                ("frpm", "Get the School Name where CDSCode = '01100170109835' from Schools."),
-                ("frpm", "Retrieve the Percent (%) Eligible FRPM (Ages 5-17) where School Name = 'Envision Academy for Arts & Technology' in Schools."),
-                ("frpm", "Fetch unique Charter School Numbers from Schools."),
-                ("frpm", "Fetch distinct School Type where Percent (%) Eligible Free (K-12) > 0.5 in Schools."),
-
-                ("schools", "Get the AdmEmail1 where CDSCode = '01100170000000' from Schools."),
-                ("schools", "Retrieve the CharterNum where Charter = 1 in Schools."),
-                ("schools", "Fetch unique District values from Schools."),
-                ("schools", "Fetch distinct StatusType where State = 'CA' in Schools."),
-            ]
+    ("satscores", "Grab AvgScrMath from the satscores dataset where cds = '1100170000000'."),
+    ("satscores", "Pick NumTstTakr out of satscores where cname = 'Alameda'."),
+    ("satscores", "Get distinct cds values from satscores."),
+    ("satscores", "Retrieve unique rtype values from satscores where AvgScrRead > 500."),
+    ("frpm", "Pull out `School Name` from frpm where CDSCode = '01100170109835'."),
+    ("frpm", "Extract `Percent (%) Eligible FRPM (Ages 5-17)` from frpm where `School Name` = 'Envision Academy for Arts & Technology'."),
+    ("frpm", "Fetch all distinct `Charter School Numbers` in frpm."),
+    ("frpm", "Grab distinct `School Type` from frpm where `Percent (%) Eligible Free (K-12)` > 0.5."),
+    ("schools", "Fetch AdmEmail1 from schools where CDSCode = '01100170000000'."),
+    ("schools", "Extract CharterNum from schools where Charter = 1."),
+    ("schools", "Select distinct District names from schools."),
+    ("schools", "Pull unique StatusType values from schools where State = 'CA'.")
+]
         
     def __call__(self, t):
         print("#"*100)
@@ -72,12 +71,13 @@ class NoSQLTestCases:
             table, query = t
             print("NL Query : ", query)
             self.query = query
-            parser, corrs = get_parser(self.schema_description, table, print_cfg=False)
+            cfg_string, parser, corrs = get_parser(self.schema_description, table, print_cfg=False)
             self.corrs = corrs
+            self.cfg = cfg_string
             query = restructure_query(query, corrs)
             print("Reconstructed Query : ", query)
             self.reconstructed_query = query
-            tokens = query.split()
+            tokens = tokenizer(query)
             tree = next(parser.parse(tokens))
             self.tree = tree
             print("Parse Tree : ", tree)
@@ -87,20 +87,23 @@ class NoSQLTestCases:
             nosql = SQLToMongoConverter().convert_to_mongo(sqlt)
             self.nosql = nosql
             print("NoSQL : ", nosql)
-            res = query_nosql('formula_1', nosql)[:self.max_sample]
+            res = query_nosql(self.db_name, nosql)[:self.max_sample]
             print("Results : ", res)
             return res
-        except:
+        except Exception as E:
+            if self.debug:
+                print(f"[ERROR] {E}")
             res = []
             print("Results : ", res)
             return []
         
 class SQLTestCases:
     #changed default db name to default
-    def __init__(self, db_name='default', max_sample=3):
+    def __init__(self, db_name='default', max_sample=3, debug=True):
         self.db_name = db_name
         self.schema_description=data_explore(f'SQL/{db_name}', print_schema=False)
         self.max_sample = max_sample
+        self.debug = debug
         if self.db_name == 'thrombosis_prediction':
             self.t = [
         # Examination table
@@ -162,11 +165,13 @@ class SQLTestCases:
             table, query = t
             print("NL Query : ", query)
             self.query = query
-            parser, corrs = get_parser(self.schema_description, table, print_cfg=False)
+            cfg_string, parser, corrs = get_parser(self.schema_description, table, print_cfg=False)
+            self.corrs = corrs 
+            self.cfg = cfg_string
             query = restructure_query(query, corrs)
             print("Reconstructed Query : ", query)
             self.reconstructed_query = query
-            tokens = query.split()
+            tokens = tokenizer(query)
             tree = next(parser.parse(tokens))
             print("Parse Tree : ", tree)
             self.tree = tree
@@ -176,6 +181,8 @@ class SQLTestCases:
             res = query_sql(f'SQL/{self.db_name}/{self.db_name}.sqlite', sql)[:self.max_sample]
             print("Results : ", res)
             return res
-        except:
+        except Exception as E:
+            if self.debug:
+                print(f"[ERROR] {E}")
             print("Results : ", [])
             return []
