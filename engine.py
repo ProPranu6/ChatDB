@@ -13,30 +13,17 @@ from warnings import filterwarnings
 import sqlite3
 import json
 import os
-
+import re
+import io
 filterwarnings('ignore')
 
 
-KEYWORDS = ['get', 'by', 'where', 'order', 'group']
+KEYWORDS = ['by', 'where', 'order', 'group']
 STOPWORDS = [ wd for wd in stopwords.words('english') if wd not in KEYWORDS]
 LEMMATIZER = WordNetLemmatizer()
 NUMBER_STORE = []
 STRING_STORE = []
 
-AGGREGATE_MAP = {
-    "median": "MEDIAN",
-    "count": "COUNT",
-    "variance": "VARIANCE",
-    "minimum": "MIN",
-    "summation": "SUM",
-    "maximum": "MAX",
-    "standard deviation": "STDDEV",
-    "matter": "SUM",  # Now mapped to SUM
-    "counting": "COUNT",
-    "average": "AVG",
-    "addition": "SUM",
-    "distinct" : "DISTINCT"
-}
 
 
 
@@ -206,14 +193,19 @@ def _describe_database_schema(db, dbtype='NoSQL', print_db=False):
     return database_schema
 
 def _schema_print(schema_description):
+    # Capture the printed output
+    output = io.StringIO()
     # Print the schema
     for collection, schema in schema_description.items():
-        print(f"Collection: {collection}")
+        output.write(f"Collection: {collection}\n")
         for field, data_list in schema.items():
-            print(f"  Field: {field}")
             count, typee, zone, uniqueness, nullity, minval, maxval, distinct = data_list
-            print(f"    Data-Type: {typee}, Count: {count}, Concpt-Type: {zone}, Unique: {True if uniqueness == 'unique' else False}, Null: {True if nullity == 'null' else False} " + (f"Min: {minval}, Max: {maxval}" if zone=='num' else "") + (f"Distinct : {distinct}" if zone=='str' else "") )
-
+            output.write(f"  Field: {field}\n")
+            output.write(f"    Data-Type: {typee}, Count: {count}, Concpt-Type: {zone}, Unique: {True if uniqueness == 'unique' else False}, Null: {True if nullity == 'null' else False} " + 
+                         (f"Min: {minval}, Max: {maxval}" if zone == 'num' else "") + 
+                         (f"Distinct : {distinct}" if zone == 'str' else "") + "\n")
+    # Return the captured output
+    return output.getvalue()
 def data_ingest(file_path='NoSQL/formula_1'):
     _load_nosql(file_path)
     return 
@@ -229,7 +221,17 @@ def data_explore(file_path='NoSQL/formula_1', print_schema=True):
     if print_schema:
         _schema_print(schema_description)
     return schema_description
+def data_explore_display(file_path='NoSQL/formula_1', print_schema=True):
+    if file_path.split("/")[0].lower() == 'sql':
+        for sqlitef in os.listdir(file_path):
+            if sqlitef.endswith('.sqlite'):
+                _sqlite_tables_to_json(os.path.join(file_path, sqlitef))
 
+    db = _load_nosql(file_path)
+    schema_description = _describe_database_schema(db, dbtype=file_path.split("/")[0], print_db=print_schema)
+    if print_schema:
+        _schema_print(schema_description)
+    return _schema_print(schema_description)
 import random
 
 def generate_sql(schema_description):
@@ -354,24 +356,38 @@ def generate_sql(schema_description):
 
 
 
-
-
-
+def _split_ignore_quoticks(s):
+    return re.findall(r"'[^']*'|`[^`]*`|\S+", s)
 
 
 def _preprocess(wd, corrs=[]):
+    
     #wd = wd.lower().strip(",")
+
     if wd.lower().strip(",") in STOPWORDS:
         return ""
     
     
+    #keyword_matches = process.extractBests(wd.lower().strip(","), limit=1, choices=list(map(lambda x: x.strip('\"'), KEYWORDS)), score_cutoff=75)
+    #table_matches = process.extractBests(wd.lower().strip(","), limit=1, choices=list(map(lambda x: x.strip('\"'), corrs['table'])), score_cutoff=85)
+    #col_matches = process.extractBests(wd.lower().strip(","), limit=1, choices=list(map(lambda x: x.strip('\"'), corrs['cols'])), score_cutoff=85)
+    #cmds_aggs_matches = process.extractBests(wd.lower().strip(","), limit=1, choices=list(map(lambda x: x.strip('\"'), corrs['cmds_aggs'])), score_cutoff=75)
+    
     #wd = LEMMATIZER.lemmatize(wd)
-    res = process.extractBests(wd.lower().strip(","), limit=1, choices=list(map(lambda x: x.strip('\"'), corrs + KEYWORDS)), score_cutoff=75)
-    if wd.isdigit():
-        NUMBER_STORE.append(wd)
+    res = process.extractBests(wd.lower().strip(","), limit=1, choices=list(map(lambda x: x.strip('\"'), corrs['table'] + corrs['cols'] + corrs['cmds_aggs'] + KEYWORDS)), score_cutoff=75)
+
+
+    try:
+        float(wd.strip(",.;"))
+        NUMBER_STORE.append(wd.strip(",.;"))
         wd = "<number>"
-    elif "'" in wd[0] == "'" and wd[-1] == "'":
-        STRING_STORE.append(wd.strip().replace("-", " "))
+        return wd
+    except:
+        pass
+    
+    if "'" in wd:
+        wd = re.match('[^a-zA-Z0-9\s-]*([\w\s-]+)[^a-zA-Z0-9\s-]*', wd).group(1)
+        STRING_STORE.append(wd.replace("-", " "))
         wd = "<string>"
     elif wd in ['>', '<', '>=', '<=', '=']:
         pass
@@ -412,55 +428,58 @@ def get_parser(schema_description, table, print_cfg=True):
         _type = schema_description[collection][col][2]
         
         if _type  == 'cat':
-            col_cat['CAT'] += ['\"' + col + '\"']
+            col_cat['CAT'] +=  (['\"`' + col + '`\"'] if len(col.split())>1 else ['\"' + col + '\"'])
         elif _type  == 'nominal-cat':
-            col_cat['NOMCAT'] += ['\"' + col + '\"']
+            col_cat['NOMCAT'] += (['\"`' + col + '`\"'] if len(col.split())>1 else ['\"' + col + '\"'])
         elif _type  == 'ordinal-cat':
-            col_cat['ORDCAT'] += ['\"' + col + '\"']
+            col_cat['ORDCAT'] += (['\"`' + col + '`\"'] if len(col.split())>1 else ['\"' + col + '\"'])
         else:
-            col_cat['NUM'] += ['\"' + col + '\"']
+            col_cat['NUM'] += (['\"`' + col + '`\"'] if len(col.split())>1 else ['\"' + col + '\"'])
     
 
     # Initialize the Datamuse client
     api = Datamuse()
 
     # Query for synonyms of a word, e.g., 'happy'
-    cmd_wds = ['get', 'fetch', 'find', 'select']
+    cmd_wds = ['get', 'fetch', 'find', 'select', 'grab', 'extract']
     cmds = set()
     for cmd_wd in cmd_wds:
-        synonyms = api.words(ml='select', rel_syn=cmd_wd)
+        synonyms = api.words(topics='select, find, search, get', rel_syn=cmd_wd, max=10)
         for word in synonyms:
-            cmds.add('\"' + word['word'] + '\"')
+            cmds.add('\"' + word['word'].replace(" ", "-") + '\"')
     for word in cmd_wds:
-        cmds.add('\"' + word + '\"')
+        cmds.add('\"' + word.replace(" ","-") + '\"')
     cmds = list(cmds)
     
-    agg_wds = ['summation', 'minimum', 'maximum', 'average', 'median', 'count', 'variance', 'standard deviation', 'distinct']
+    agg_wds = {'sums' : ['summation'], 'mins' : ['minimum'], 'maxs' : ['maximum'], 'medians' : ['median'], 'avgs' : ['average'], 'counts' : ['count'], 'variances' : ['variance'], 'stds' : ['standard deviation'], 'distincts' : ['distinct', 'unique']}
     aggs = set()
-    for agg_wd in agg_wds:
-        synonyms = api.words(rel_syn=agg_wd, ml='aggregation')
-        for word in synonyms:
-            aggs.add('\"' + word['word'] + '\"')
-    for word in agg_wds:
-        aggs.add('\"' + word + '\"')
-    aggs = list(aggs)
+    for agg_ref in agg_wds:
+        agg_ref_res = set()
+        for agg_base in agg_wds[agg_ref]:
+            synonyms = api.words(rel_syn=agg_base, topics='aggregation, statistics', max=10)
+            for word in synonyms:
+                agg_ref_res.add('\"' + word['word'].replace(" ", "-") + '\"')
+            agg_ref_res.add('\"' + agg_base.replace(" ", "-") + '\"')
+        agg_wds[agg_ref] = list(agg_ref_res)
+        aggs = aggs.union(agg_ref_res)
 
-        
+    aggs = list(aggs)
+   
     # Print the synonyms
 
-    cats = ' | '.join(further_split(col_cat['CAT']))
+    cats = ' | '.join(col_cat['CAT'])
     if not(cats):
         cats = '\"<default>\"'
 
-    nums = ' | '.join(further_split(col_cat['NUM']))
+    nums = ' | '.join(col_cat['NUM'])
     if not(nums):
         nums =  '\"<default>\"'
 
-    nomcats = ' | '.join(further_split(col_cat['NOMCAT']) )
+    nomcats = ' | '.join(col_cat['NOMCAT'])
     if not(nomcats):
         nomcats = '\"<default>\"'
     
-    ordcats = ' | '.join(further_split(col_cat['ORDCAT']))
+    ordcats = ' | '.join(col_cat['ORDCAT'])
     if not(ordcats):
         ordcats = '\"<default>\"'
     
@@ -477,7 +496,16 @@ def get_parser(schema_description, table, print_cfg=True):
     NOMCAT -> {nomcats}
     ORDCAT -> {ordcats}
     CMD -> {' | '.join(cmds)}
-    AGG -> {' | '.join(aggs)}
+    AGG -> SUM | MIN | MAX | MEDIAN | AVG | COUNT | VARIANCE | STDDEV | DISTINCT
+    SUM -> {' | '.join(agg_wds['sums'])}
+    MIN -> {' | '.join(agg_wds['mins'])}
+    MAX -> {' | '.join(agg_wds['maxs'])}
+    MEDIAN -> {' | '.join(agg_wds['medians'])}
+    AVG -> {' | '.join(agg_wds['avgs'])}
+    COUNT -> {' | '.join(agg_wds['counts'])}
+    VARIANCE -> {' | '.join(agg_wds['variances'])}
+    STDDEV -> {' | '.join(agg_wds['stds'])}
+    DISTINCT -> {' | '.join(agg_wds['distincts'])}
     NOP -> ">" | "<" | ">=" | "<=" | "="
     TABLE -> {table}
     VALUE -> "<number>" | "<string>"
@@ -491,14 +519,14 @@ def get_parser(schema_description, table, print_cfg=True):
     # Define a parser
     parser = nltk.ChartParser(grammar, trace=0)
 
-    return parser, list(set(col_cat['CAT'] + col_cat['NUM'] + col_cat['NOMCAT'] + col_cat['ORDCAT'] + cmds + aggs + [table]))
+    return cfg_string, parser, {'cols' : list(set(col_cat['CAT'] + col_cat['NUM'] + col_cat['NOMCAT'] + col_cat['ORDCAT'])), 'cmds_aggs' : list(set(cmds + aggs)), 'table' : [table]}
 
 def restructure_query(query, corrs):
     global NUMBER_STORE, STRING_STORE
     NUMBER_STORE = []
     STRING_STORE = []
 
-    corrected_query = " ".join([wd for wd in list(map(lambda x: _preprocess(x, corrs), query.split())) if wd])
+    corrected_query = " ".join([wd for wd in list(map(lambda x: _preprocess(x, corrs), _split_ignore_quoticks(query))) if wd])
     return corrected_query
 
 
@@ -515,8 +543,8 @@ def query_sql(db='SQL/thrombosis_prediction/thrombosis_prediction.sqlite', q="se
     con.close()
     return results
 
-def query_nosql(db='SQL/thrombosis_prediction/thrombosis_prediction.sqlite', q="select *"):
-    results = list(eval('client[db].' + q))
+def query_nosql(dbname='SQL/thrombosis_prediction/thrombosis_prediction.sqlite', q="select *"):
+    results = list(eval('client[dbname].' + q))
     return results
 
  
@@ -545,10 +573,11 @@ def parse_tree_to_sql(tree):
             elif label == 'AGG':
                 # Add aggregation function
                 agg_effect = True
-                agg = node[0]
-                if agg in AGGREGATE_MAP:
-                    agg = AGGREGATE_MAP[agg]
-                cmd_clause.append(f"{agg}(")
+              
+            
+            elif label in ["SUM", "MIN", "MAX", "MEDIAN", "AVG", "COUNT", "VARIANCE", "STDDEV", "DISTINCT"]:
+                    #agg = AGGREGATE_MAP[label]
+                    cmd_clause.append(f"{label}(")
        
 
             elif label == 'COLUMN':
@@ -563,9 +592,9 @@ def parse_tree_to_sql(tree):
                         if isinstance(child, Tree) and child.label() in ['CAT', 'NUM', 'ORDCAT', 'NOMCAT']:
                             if agg_effect:
                                 agg_effect = False
-                                columns.append(f'{" ".join(child[:])}), ')
+                                columns.append(f'{child[0].replace("`", "")}), ')
                             else:
-                                columns.append(f'{" ".join(child[:])}, ')
+                                columns.append(f'{child[0].replace("`", "")}, ')
                         else:
                             pass
                     if columns:
@@ -592,7 +621,7 @@ def parse_tree_to_sql(tree):
                     condition_clause.append(NUMBER_STORE[ns_head])
                     ns_head += 1
                 else:
-                    condition_clause.append(STRING_STORE[ss_head])
+                    condition_clause.append("'" + STRING_STORE[ss_head] + "'")
                     ss_head += 1
                 
         
@@ -626,8 +655,8 @@ class SQLToMongoConverter:
             "MAX": "$max",
             "MEDIAN": "$avg",
             "STDDEV": "$stdDevPop",
-            "VARIANCE": "$variance",
-            "DISTINCT" : "$distinct"
+            "VARIANCE": "$stdDevSamp",
+            "DISTINCT" : "$addToSet"
         }
         
         # Mapping of SQL operators to MongoDB equivalents
@@ -641,7 +670,10 @@ class SQLToMongoConverter:
 
     def parse_value(self, value: str) -> Union[int, float, str]:
         """Parse value while preserving integer type"""
-        value = value.strip('"\'')
+        if "'" in value:
+            return value.strip('"\'')
+
+        value = value.strip('"\'')        
         try:
             return int(value)
         except ValueError:

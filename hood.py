@@ -6,7 +6,7 @@ import zipfile
 import shutil
 from io import BytesIO
 from fastapi import FastAPI
-from engine import client, data_explore, get_parser, generate_sql, restructure_query, parse_tree_to_sql, query_sql, query_nosql, SQLToMongoConverter
+from engine import client, data_explore_display, data_explore, get_parser, generate_sql, restructure_query, parse_tree_to_sql, query_sql, query_nosql, SQLToMongoConverter
 from pydantic import BaseModel
 from warnings import filterwarnings
 import json
@@ -118,7 +118,7 @@ async def db_explore_sql():
 
 @app.post("/schema")
 async def data_explore_api(db_info: DBInfo):
-    return JSONResponse({"message": data_explore(db_info.db_path)})
+    return JSONResponse({"message": data_explore_display(db_info.db_path)})
 
 @app.post("/sq/sql")
 async def generate_sample_q_sql(db_info: DBInfo):
