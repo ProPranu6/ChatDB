@@ -143,20 +143,20 @@ class SQLTestCases:
             ]
         elif self.db_name == 'european_football_2':
             self.t = [
-                ("Leagues", "Get the total count of leagues where country_id > 10000 from Leagues."),
-                ("Leagues", "Fetch unique country_ids from Leagues."),
-                ("Leagues", "Fetch distinct league names where country_id = 7809 in Leagues."),
-                ("Leagues", "Retrieve the id of the league where country_id = 1729 in Leagues."),
+                ("League", "Get the total count of League where country_id > 10000 from League."),
+                ("League", "Fetch unique country_ids from League."),
+                ("League", "Fetch distinct league names where country_id = 7809 in League."),
+                ("League", "Retrieve the id of the league where country_id = 1729 in League."),
 
-                ("Players", "Get the player_name where id = 1 from Players."),
-                ("Players", "Retrieve the height of the player where player_name = 'Aaron Cresswell' in Players."),
-                ("Players", "Fetch unique player_fifa_api_id values from Players."),
-                ("Players", "Fetch distinct birthdays where weight = 187 in Players."),
+                ("Player", "Get the player_name where id = 1 from Player."),
+                ("Player", "Retrieve the height of the player where player_name = 'Aaron Cresswell' in Player."),
+                ("Player", "Fetch unique player_fifa_api_id values from Player."),
+                ("Player", "Fetch distinct birthdays where weight = 187 in Player."),
 
-                ("Teams", "Get the team_long_name where id = 1 from Teams."),
-                ("Teams", "Retrieve the team_short_name where team_fifa_api_id = 675 in Teams."),
-                ("Teams", "Fetch unique team_api_id values from Teams."),
-                ("Teams", "Fetch distinct team_fifa_api_id where team_long_name = 'Beerschot AC' in Teams.")
+                ("Team", "Get the team_long_name where id = 1 from Team."),
+                ("Team", "Retrieve the team_short_name where team_fifa_api_id = 675 in Team."),
+                ("Team", "Fetch unique team_api_id values from Team."),
+                ("Team", "Fetch distinct team_fifa_api_id where team_long_name = 'Beerschot AC' in Team.")
             ]
    
     def __call__(self, t):
