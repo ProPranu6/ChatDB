@@ -14,22 +14,29 @@ class NoSQLTestCases:
         if self.db_name == 'formula_1':
             self.t = [
         # constructorStandings
-        ("constructorStandings", "Fetch the minimum points from constructorStandings, grouped by constructorStandingsId."),
-        ("constructorStandings", "Get the minimum position from constructorStandings where points = 7."),
-        ("constructorStandings", "Get the mean of points from constructorStandings."),
-        ("constructorStandings", "Fetch the total points from constructorStandings."),
-        ("constructorStandings", "Get the summation of points from constructorStandings, that are grouped by _id."),
+        ("constructorStandings", "where points = 7 in constructorStandings, get the minimum position"),
+        ("constructorStandings", "get me a summation of wins in `constructor standings` where position placed is > 3 grouped by constructorid"),
+        ("constructorStandings", "extract all distinct raceids happned in constructiorstandings"),
+        ("constructorStandings", "get maximum points that is scored, grouped by constructorid from constructorstandings"),
         
         # circuits
         ("circuits", "Fetch the minimum long from circuits, ordered by lat."),
         ("circuits", "Fetch the variance in long from circuits where circuitId > 50"),
+        ('circuits', 'find all distinct locations grouped by country in circuits'),
+        ("circuits", "find mean lat of circuits where the host country is = 'France'"),
         
         # constructors
         ("constructors", "Fetch _id from constructors."),
-        
+        ("constructors", "find the nationality and the name of the car from constructors info"),
+        ("constructors", "for where car name is = 'Ferrari', get me its website url from the constructors table"),
+        ("constructors", "find what are all the names of the cars where nationality is = 'Italian' in constructors"),
+
         # races
-        ("races", "Get year from races."),
-        ("races", "Fetch round from races.")
+        ("races", "get me circuitids of all races where the rounds that happened there are > 10"),
+        ("races", "From races, what cna you get as the smallest time for where the name of the venue is = 'Australian Grand Prix'"),
+        ("races", "From races, get me the maximum rounds happened where the venue is named = 'Monaco Grand Prix'"),
+        ("races", "Find me the website ursl for all races where they happened in year = 2009 and group them by name of venue")
+
     ]
         elif self.db_name == 'debit_card_specialization':
             self.t = [
@@ -107,14 +114,14 @@ class SQLTestCases:
         if self.db_name == 'thrombosis_prediction':
             self.t = [
         # Examination table
-        ("Examination", "Get the average of ANA where Thrombosis = 1 from Examination."),
-        ("Examination", "Retrieve the sum of ANA where Thrombosis = 2 in Examination."),
-        ("Examination", "Fetch unique values of Symptoms where Thrombosis = 3 from Examination."),
-        ("Examination", "Fetch distinct Diagnosis values where Thrombosis = 2 in Examination."),
+        ("Examination", "From the examimation, what can you find as the average ANA for where Thrombosis = 1"),
+        ("Examination", "According to examinations data, what can you get as the diagnosis to be used for where sympotms = 'AMI'"),
+        ("Examination", "get me all the distinct symptoms found and their `ANA Pattern`, according to the examinations, where thrombosis = 3 grouping it by `ANA Pattern`"),
+        ("Examination", "find me all the `examination dates` from the examination records for where `aCL IgM` > 10"),
 
 
         # Laboratory table
-        ("Laboratory", "Fetch the maximum value of GOT where GOT > 100 from Laboratory."),
+        ("Laboratory", "get me the maximum value for GOT, CRP from the laboratory records where GOT > 100 and group this by CRP."),
         ("Laboratory", "Get the average of CPK where TG > 100 from Laboratory."),
         ("Laboratory", "Retrieve the average value of ALB where HGB > 12 from Laboratory."),
         ("Laboratory", "Get the total count of RBC where T-BIL > 0.2 in Laboratory."),
@@ -123,10 +130,9 @@ class SQLTestCases:
 
 
         # Patient table
-        ("Patient", "Fetch the total count of PatientID where SEX = 1 from Patient."),
-        ("Patient", "Get all unique values of SEX where ID = 4060811 from Patient."),
-        ("Patient", "Fetch all non-null Description values where PatientID = 1124385 from Patient.")
-
+        ("Patient", "From the patient records, where sex of person is = 'M' get me his bitrthday"),
+        ("Patient", "Get me the id of patients where their `first date` is < '1985-10-01' and group this by diagnosis results."),
+        ("Patient", "In the ecords, find diagnosis of patients grouped by their sex.")
     ]
         elif self.db_name == 'superhero':
             self.t = [
@@ -143,20 +149,20 @@ class SQLTestCases:
             ]
         elif self.db_name == 'european_football_2':
             self.t = [
-                ("League", "Get the total count of League where country_id > 10000 from League."),
-                ("League", "Fetch unique country_ids from League."),
-                ("League", "Fetch distinct league names where country_id = 7809 in League."),
-                ("League", "Retrieve the id of the league where country_id = 1729 in League."),
+                ("Leagues", "Get the total count of leagues where country_id > 10000 from Leagues."),
+                ("Leagues", "Fetch unique country_ids from Leagues."),
+                ("Leagues", "Fetch distinct league names where country_id = 7809 in Leagues."),
+                ("Leagues", "Retrieve the id of the league where country_id = 1729 in Leagues."),
 
-                ("Player", "Get the player_name where id = 1 from Player."),
-                ("Player", "Retrieve the height of the player where player_name = 'Aaron Cresswell' in Player."),
-                ("Player", "Fetch unique player_fifa_api_id values from Player."),
-                ("Player", "Fetch distinct birthdays where weight = 187 in Player."),
+                ("Players", "Get the player_name where id = 1 from Players."),
+                ("Players", "Retrieve the height of the player where player_name = 'Aaron Cresswell' in Players."),
+                ("Players", "Fetch unique player_fifa_api_id values from Players."),
+                ("Players", "Fetch distinct birthdays where weight = 187 in Players."),
 
-                ("Team", "Get the team_long_name where id = 1 from Team."),
-                ("Team", "Retrieve the team_short_name where team_fifa_api_id = 675 in Team."),
-                ("Team", "Fetch unique team_api_id values from Team."),
-                ("Team", "Fetch distinct team_fifa_api_id where team_long_name = 'Beerschot AC' in Team.")
+                ("Teams", "Get the team_long_name where id = 1 from Teams."),
+                ("Teams", "Retrieve the team_short_name where team_fifa_api_id = 675 in Teams."),
+                ("Teams", "Fetch unique team_api_id values from Teams."),
+                ("Teams", "Fetch distinct team_fifa_api_id where team_long_name = 'Beerschot AC' in Teams.")
             ]
    
     def __call__(self, t):

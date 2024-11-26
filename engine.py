@@ -14,7 +14,7 @@ import sqlite3
 import json
 import os
 import re
-import io
+
 filterwarnings('ignore')
 
 
@@ -29,11 +29,37 @@ STRING_STORE = []
 
 client = MongoClient()
 
-rules = """RULES FOR NLQ (NATURAL LANGUAGE QUERY)
-*1 Always use KEYWORDS [where, order by, group by] in NL; slight deviations allowed
-*2 Always join multiword operators with '-' [standard-deviation, minimum-of /etc]; other connectors allowed except space
-*3 Where clauses don't support pure cat field comparisions 
+rules = """
+This package provides tools for converting natural language queries into SQL and NoSQL database queries 
+for retrieving results. It operates without the use of learnable parameters, neural networks, or embeddings, 
+focusing instead on rule-based natural language parsing.
+
+Features:
+1. Supports natural language descriptions of queries that involve combinations of:
+   - `SELECT` statements
+   - Table names
+   - Column names
+   - `WHERE`, `GROUP BY`, and `ORDER BY` clauses
+   Column names can include aggregated operations such as `min`, `max`, `median`, `mean`, `stddev`, `variance`, 
+   `count`, and `distinct`.
+
+2. Enforces rules for SQL queries:
+   - When `WHERE`, `GROUP BY`, or `ORDER BY` clauses are used, the keywords **must appear** explicitly 
+     in their respective clauses.
+   - Multi-word column names are enclosed in backticks (e.g., `` `column name` ``).
+   - Aggregation parameters with multi-word descriptions are supported using formats like `minimum-of`, 
+     `standard-deviation`, etc.
+
+3. Supports natural language queries with filler words (e.g., prepositions, stop words) between clauses or commands 
+   while ensuring syntactic correctness.
+
+4. Ensures that table names appear only once in a query, whereas column names and aggregation operations 
+   may occur multiple times.
+
+This package is ideal for scenarios requiring accurate, rule-based query generation without relying on 
+machine learning or embeddings.
 """
+
 print(rules)
 
 def _load_nosql(database_dir):
@@ -193,19 +219,14 @@ def _describe_database_schema(db, dbtype='NoSQL', print_db=False):
     return database_schema
 
 def _schema_print(schema_description):
-    # Capture the printed output
-    output = io.StringIO()
     # Print the schema
     for collection, schema in schema_description.items():
-        output.write(f"Collection: {collection}\n")
+        print(f"Collection: {collection}")
         for field, data_list in schema.items():
+            print(f"  Field: {field}")
             count, typee, zone, uniqueness, nullity, minval, maxval, distinct = data_list
-            output.write(f"  Field: {field}\n")
-            output.write(f"    Data-Type: {typee}, Count: {count}, Concpt-Type: {zone}, Unique: {True if uniqueness == 'unique' else False}, Null: {True if nullity == 'null' else False} " + 
-                         (f"Min: {minval}, Max: {maxval}" if zone == 'num' else "") + 
-                         (f"Distinct : {distinct}" if zone == 'str' else "") + "\n")
-    # Return the captured output
-    return output.getvalue()
+            print(f"    Data-Type: {typee}, Count: {count}, Concpt-Type: {zone}, Unique: {True if uniqueness == 'unique' else False}, Null: {True if nullity == 'null' else False} " + (f"Min: {minval}, Max: {maxval}" if zone=='num' else "") + (f"Distinct : {distinct}" if zone=='str' else "") )
+
 def data_ingest(file_path='NoSQL/formula_1'):
     _load_nosql(file_path)
     return 
@@ -221,17 +242,7 @@ def data_explore(file_path='NoSQL/formula_1', print_schema=True):
     if print_schema:
         _schema_print(schema_description)
     return schema_description
-def data_explore_display(file_path='NoSQL/formula_1', print_schema=True):
-    if file_path.split("/")[0].lower() == 'sql':
-        for sqlitef in os.listdir(file_path):
-            if sqlitef.endswith('.sqlite'):
-                _sqlite_tables_to_json(os.path.join(file_path, sqlitef))
 
-    db = _load_nosql(file_path)
-    schema_description = _describe_database_schema(db, dbtype=file_path.split("/")[0], print_db=print_schema)
-    if print_schema:
-        _schema_print(schema_description)
-    return _schema_print(schema_description)
 import random
 
 def generate_sql(schema_description):
@@ -387,7 +398,7 @@ def _preprocess(wd, corrs=[]):
     
     if "'" in wd:
         wd = re.match('[^a-zA-Z0-9\s-]*([\w\s-]+)[^a-zA-Z0-9\s-]*', wd).group(1)
-        STRING_STORE.append(wd.replace("-", " "))
+        STRING_STORE.append(wd)
         wd = "<string>"
     elif wd in ['>', '<', '>=', '<=', '=']:
         pass
@@ -486,7 +497,7 @@ def get_parser(schema_description, table, print_cfg=True):
 
     table = '\"' + table + '\"'
     cfg_string = f"""
-    S -> CMD "*" TABLE CLAUSE | CMD COLUMN TABLE CLAUSE | CMD AGG COLUMN TABLE CLAUSE | CMD "*" CLAUSE TABLE | CMD COLUMN CLAUSE TABLE| CMD AGG COLUMN CLAUSE TABLE 
+    S -> CMD "*" TABLE CLAUSE | CMD COLUMN TABLE CLAUSE | CMD AGG COLUMN TABLE CLAUSE | CMD "*" CLAUSE TABLE | CMD COLUMN CLAUSE TABLE| CMD AGG COLUMN CLAUSE TABLE | CLAUSE CMD COLUMN TABLE | CLAUSE CMD AGG COLUMN TABLE | CLAUSE CMD COLUMN TABLE CLAUSE | CLAUSE CMD AGG COLUMN TABLE CLAUSE | TABLE CMD COLUMN CLAUSE | TABLE CMD AGG COLUMN CLAUSE | TABLE CLAUSE CMD COLUMN | TABLE CLAUSE CMD AGG COLUMN | TABLE CLAUSE CMD COLUMN CLAUSE | TABLE CLAUSE CMD AGG COLUMN CLAUSE | CLAUSE CMD COLUMN CLAUSE TABLE | CLAUSE CMD AGG COLUMN CLAUSE TABLE | CLAUSE TABLE CMD COLUMN | CLAUSE TABLE CMD AGG COLUMN | CLAUSE TABLE CMD COLUMN CLAUSE | CLAUSE TABLE CMD AGG COLUMN CLAUSE
     CLAUSE -> "where" COLUMN NOP VALUE CLAUSE | "group" "by" COLUMN CLAUSE | "order" "by" COLUMN CLAUSE 
     CLAUSE -> 
     COLUMN -> CAT COLUMN | NUM COLUMN | NOMCAT COLUMN | ORDCAT COLUMN | CAT AGG COLUMN | NUM AGG COLUMN | NOMCAT AGG COLUMN | ORDCAT AGG COLUMN
@@ -567,6 +578,7 @@ def parse_tree_to_sql(tree):
             if label == 'CMD':
                 # 'select' keyword handling
                 select_effect = True
+                clause_effect = False
                 cmd_clause.append(f'SELECT ')
                 pass  # Already implied in SQL
 
@@ -592,9 +604,9 @@ def parse_tree_to_sql(tree):
                         if isinstance(child, Tree) and child.label() in ['CAT', 'NUM', 'ORDCAT', 'NOMCAT']:
                             if agg_effect:
                                 agg_effect = False
-                                columns.append(f'{child[0].replace("`", "")}), ')
+                                columns.append(f'{child[0]}), ')
                             else:
-                                columns.append(f'{child[0].replace("`", "")}, ')
+                                columns.append(f'{child[0]}, ')
                         else:
                             pass
                     if columns:
@@ -617,6 +629,7 @@ def parse_tree_to_sql(tree):
                 condition_clause.append(node[0])
             
             elif label == 'VALUE':
+                clause_effect = False
                 if node[0] == "<number>":
                     condition_clause.append(NUMBER_STORE[ns_head])
                     ns_head += 1
@@ -698,7 +711,7 @@ class SQLToMongoConverter:
                         "$group": {
                             "_id": f"${group_by}",
                             "result": {
-                                self.agg_mapping[agg_func]: f"${column}" if agg_func != "COUNT" else 1
+                                self.agg_mapping[agg_func]: f"${column.replace('`', '')}" if agg_func != "COUNT" else 1
                             }
                         }
                     }
@@ -707,21 +720,21 @@ class SQLToMongoConverter:
                     "$group": {
                         "_id": None,
                         "result": {
-                            self.agg_mapping[agg_func]: f"${column}" if agg_func != "COUNT" else 1
+                            self.agg_mapping[agg_func]: f"${column.replace('`', '')}" if agg_func != "COUNT" else 1
                         }
                     }
                 }
         
         # Simple column selection
         columns = [col.strip() for col in select_part.split(",")]
-        return {"$project": {col: 1 for col in columns}}
+        return {"$project": {col.replace("`", ""): 1 for col in columns}}
 
     def parse_where_clause(self, where_clause: str) -> Dict[str, Any]:
         """Parse the WHERE clause of the SQL query"""
         if not where_clause:
             return {}
             
-        matches = re.match(r'\s*(\w+(?:\s+\w+)*)\s*([<>=]+)\s*([^,;]+)', where_clause)
+        matches = re.match(r'\s*(\`?\w+(?:\s+\w+)*\`?)\s*([<>=]+)\s*([^,;]+)', where_clause)
         if not matches:
             return {}
             
@@ -729,7 +742,7 @@ class SQLToMongoConverter:
         value = self.parse_value(value)
         
         return {
-            column: {
+            column.replace("`", ""): {
                 self.operator_mapping[operator]: value
             }
         }
@@ -748,7 +761,7 @@ class SQLToMongoConverter:
         column = order_clause.strip()
         return {
             "$sort": {
-                column: 1
+                column.replace("`", ""): 1
             }
         }
 
@@ -756,7 +769,7 @@ class SQLToMongoConverter:
         """Convert SQL query to MongoDB query"""
         # Extract main parts using regex
         select_match = re.search(r'SELECT\s+(.+?)\s+FROM', sql_query)
-        table_match = re.search(r'FROM\s+(\w+)(?:\s+GROUP\s+BY|\s+ORDER\s+BY|\s+WHERE\s+|\s*$)', sql_query)
+        table_match = re.search(r'FROM\s+(\`?\w+\`?)(?:\s+GROUP\s+BY|\s+ORDER\s+BY|\s+WHERE\s+|\s*$)', sql_query)
         where_match = re.search(r'WHERE\s+(.+?)(?:\s+GROUP\s+BY|\s+ORDER\s+BY|$)', sql_query)
         group_match = re.search(r'GROUP\s+BY\s+(.+?)(?:\s+ORDER\s+BY|$)', sql_query)
         order_match = re.search(r'ORDER\s+BY\s+(.+?)$', sql_query)
