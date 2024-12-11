@@ -51,3 +51,10 @@ To run the project locally, follow these steps:
 2. **Installation:**
    ```bash
    pip install -r requirements.txt
+
+3. **Setup and Execution:**
+   ```bash
+   fastapi hood.py
+
+Access the User Interface at the URL: 127.0.0.1:8000/static/index.html
+
