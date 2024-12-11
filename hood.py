@@ -6,7 +6,7 @@ import zipfile
 import shutil
 from io import BytesIO
 from fastapi import FastAPI
-from engine import client, data_explore, get_parser, generate_sql, restructure_query, parse_tree_to_sql, query_sql, query_nosql, SQLToMongoConverter
+from engine import client, _split_ignore_quoticks, data_explore_display, data_explore, get_parser, generate_sql, restructure_query, parse_tree_to_sql, query_sql, query_nosql, SQLToMongoConverter
 from pydantic import BaseModel
 from warnings import filterwarnings
 import json
@@ -118,7 +118,7 @@ async def db_explore_sql():
 
 @app.post("/schema")
 async def data_explore_api(db_info: DBInfo):
-    return JSONResponse({"message": data_explore(db_info.db_path)})
+    return JSONResponse({"message": data_explore_display(db_info.db_path)})
 
 @app.post("/sq/sql")
 async def generate_sample_q_sql(db_info: DBInfo):
@@ -140,27 +140,29 @@ async def query_sql_api(query_info: QueryInfo):
         raise HTTPException(status_code=400, detail="No SQL database uploaded")
 
     db_path, table, query = query_info.db_path, query_info.table, query_info.query
+    
     if db_path in MEMORY["SQL"]:
         schema_description = MEMORY_STORE['schema']
         if table == MEMORY["SQL"][db_path]:
             parser, corrs = MEMORY_STORE['parser'], MEMORY_STORE['corrs']
         else:
-            parser, corrs = get_parser(schema_description, table)
+            temp, parser, corrs = get_parser(schema_description, table)
     else:
         schema_description = data_explore(db_path)
-        parser, corrs = MEMORY_STORE['parser'], MEMORY_STORE['corrs']
-
-    query = restructure_query(query, corrs)
-    tokens = query.split()
-    tree = next(parser.parse(tokens))
-    sql = parse_tree_to_sql(tree)
-    results = query_sql(os.path.join(db_path, os.path.basename(db_path), '.sqlite'), sql)
-
+        temp, parser, corrs = get_parser(schema_description, table)
     MEMORY["SQL"] = {db_path: table}
     MEMORY_STORE["schema"] = schema_description
     MEMORY_STORE['parser'] = parser
     MEMORY_STORE['corrs'] = corrs
+    
+    query = restructure_query(query, corrs)
+    tokens = _split_ignore_quoticks(query)
+    tree = next(parser.parse(tokens))
+    sql = parse_tree_to_sql(tree)
 
+    results = query_sql(f'SQL/{os.path.basename(db_path)}/{os.path.basename(db_path)}.sqlite', sql)
+
+    
     serialized_results = json.loads(JSONEncoder().encode(results))
     result_string = f"SQL Query: {sql}" + " "+f"Data: {json.dumps(serialized_results)}"
 
@@ -179,13 +181,13 @@ async def query_nosql_api(query_info: QueryInfo):
         if table == MEMORY["NoSQL"][db_path]:
             parser, corrs = MEMORY_STORE['parser'], MEMORY_STORE['corrs']
         else:
-            parser, corrs = get_parser(schema_description, table)
+            temp, parser, corrs = get_parser(schema_description, table)
     else:
         schema_description = data_explore(db_path)
-        parser, corrs = get_parser(schema_description, table)
+        temp, parser, corrs = get_parser(schema_description, table)
 
     query = restructure_query(query, corrs)
-    tokens = query.split()
+    tokens = _split_ignore_quoticks(query)
     tree = next(parser.parse(tokens))
     sql = parse_tree_to_sql(tree)
     nosql = converter(sql)
