@@ -59,9 +59,33 @@ Features:
 This package is ideal for scenarios requiring accurate, rule-based query generation without relying on 
 machine learning or embeddings.
 """
-
+import io
 print(rules)
+def data_explore_display(file_path='NoSQL/formula_1', print_schema=True):
+    if file_path.split("/")[0].lower() == 'sql':
+        for sqlitef in os.listdir(file_path):
+            if sqlitef.endswith('.sqlite'):
+                _sqlite_tables_to_json(os.path.join(file_path, sqlitef))
 
+    db = _load_nosql(file_path)
+    schema_description = _describe_database_schema(db, dbtype=file_path.split("/")[0], print_db=print_schema)
+    if print_schema:
+        _schema_print_display(schema_description)
+    return _schema_print_display(schema_description)
+def _schema_print_display(schema_description):
+    # Capture the printed output
+    output = io.StringIO()
+    # Print the schema
+    for collection, schema in schema_description.items():
+        output.write(f"Collection: {collection}\n")
+        for field, data_list in schema.items():
+            count, typee, zone, uniqueness, nullity, minval, maxval, distinct = data_list
+            output.write(f"  Field: {field}\n")
+            output.write(f"    Data-Type: {typee}, Count: {count}, Concpt-Type: {zone}, Unique: {True if uniqueness == 'unique' else False}, Null: {True if nullity == 'null' else False} " + 
+                         (f"Min: {minval}, Max: {maxval}" if zone == 'num' else "") + 
+                         (f"Distinct : {distinct}" if zone == 'str' else "") + "\n")
+    # Return the captured output
+    return output.getvalue()
 def _load_nosql(database_dir):
     dbname = os.path.basename(database_dir.rstrip("/"))
     db = client[dbname]
