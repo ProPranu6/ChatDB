@@ -41,6 +41,69 @@ For more details, please refer to the following documents:
 - [Final Report](https://docs.google.com/document/d/1gKjGhpAoElTKi9B7CRJOXY8aMHNmCQPl4IewmJI1rFk/edit?usp=sharing)
 - [BIRD Dataset](https://drive.google.com/file/d/1OwISGcBySjV1Hvhf3D8PWpt4r0-eRGVF/view?usp=sharing)
 
+# Project File Descriptions
+
+### `engine.py`
+Contains all backend scripts required for:
+- Database exploration
+- Schema extraction
+- Sample query generation
+- Query normalization
+- Query syntax and spelling correction
+- Query parsing
+- SQL-to-NoSQL mapping
+
+---
+
+### `hood.py`
+API wrapper that serves endpoints for:
+- Database upload
+- Schema retrieval
+- Query execution
+
+---
+
+### `static/`
+Contains frontend files:
+- **`index.html`**: User interface
+- **`style.css`**: Styling for the interface
+
+---
+
+### `test_cases.py`
+Includes sample SQL and NoSQL test queries for execution.
+
+---
+
+### `code.ipynb`
+Jupyter notebook for interactive testing of the system's functionalities.
+
+---
+
+### `README.md`
+Documentation of the project.
+
+---
+
+### `requirements.txt`
+Lists Python dependencies required to run the project.
+
+---
+
+### `chat_db_flow.png`
+Flowchart or diagram representing the system architecture.
+
+---
+
+### `sample_nosql_schema.txt`
+Sample output for NoSQL schema description.
+
+---
+
+### `sample_nosql_querygen.txt`
+Sample output for NoSQL query generation.
+
+
 ## Getting Started
 To run the project locally, follow these steps:
 1. **Prerequisites:**
