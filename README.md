@@ -70,6 +70,16 @@ Contains frontend files:
 
 ---
 
+### `SQL/`
+Directory containing the chosen SQL databases for testing and demonstration.
+
+---
+
+### `NoSQL/`
+Directory containing the chosen NoSQL databases for testing and demonstration.
+
+---
+
 ### `test_cases.py`
 Includes sample SQL and NoSQL test queries for execution.
 
