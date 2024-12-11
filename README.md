@@ -1,5 +1,6 @@
 # ChatDB: Natural Language to Database Query Interface
 Makes use of Non-Learning approaches for understanding natural language database queries
+![image](files/Users/jzhang/Desktop/Isolated.png)
 
 ## Overview
 ChatDB is an intelligent system designed to bridge the gap between natural language and database queries. It allows users to interact with databases using simple natural language commands, without requiring in-depth knowledge of SQL or NoSQL query syntax. This project focuses on enabling seamless access to both structured (SQL) and semi-structured (NoSQL) databases, making data retrieval more intuitive and user-friendly.
@@ -26,11 +27,6 @@ ChatDB is an intelligent system designed to bridge the gap between natural langu
 5. **BIRD Dataset:**
    - The project utilizes the **BIRD (Big Bench for Large-scale Database Grounded Text-to-SQL Evaluation)** dataset, which contains over 12,751 unique question-SQL pairs and 95 big databases across 37 professional domains.
    - Specifically, we are using a subsection of databases and tables from BIRD for our case study, including **Formula 1 races** data for NoSQL (MongoDB) and **thrombosis prediction** data for SQL (MySQL).
-
-## Current Progress
-- The first two components, **Database Exploration** and **Query Generation**, have been successfully implemented.
-- We are currently working on enhancing the **Natural Language Understanding** module, developing CFGs, and curating synonymous word lists.
-- Next, we plan to build the necessary **APIs** to connect backend functionalities with the front-end interface.
 
 ## Challenges
 The primary challenge lies in handling the flexible structure of natural language, which can include synonyms, filler words, and unexpected phrasing. To address this, we use techniques like:
