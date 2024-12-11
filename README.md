@@ -41,7 +41,7 @@ For more details, please refer to the following documents:
 - [Final Report](https://docs.google.com/document/d/1gKjGhpAoElTKi9B7CRJOXY8aMHNmCQPl4IewmJI1rFk/edit?usp=sharing)
 - [BIRD Dataset](https://drive.google.com/file/d/1OwISGcBySjV1Hvhf3D8PWpt4r0-eRGVF/view?usp=sharing)
 
-# Project File Descriptions
+## Project File Descriptions
 
 ### `engine.py`
 Contains all backend scripts required for:
@@ -113,11 +113,14 @@ To run the project locally, follow these steps:
 
 2. **Installation:**
    ```bash
+   git clone <repository-url>
+   cd <repository-directory>
    pip install -r requirements.txt
 
 3. **Setup and Execution:**
    ```bash
-   fastapi hood.py
+   fastapi run hood.py
+   
 
 Access the User Interface at the URL: [127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
 
