@@ -56,5 +56,5 @@ To run the project locally, follow these steps:
    ```bash
    fastapi hood.py
 
-Access the User Interface at the URL: 127.0.0.1:8000/static/index.html
+Access the User Interface at the URL: [127.0.0.1:8000/static/index.html]
 
