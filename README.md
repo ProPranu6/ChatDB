@@ -1,6 +1,6 @@
 # ChatDB: Natural Language to Database Query Interface
 Makes use of Non-Learning approaches for understanding natural language database queries
-![image](files/Users/jzhang/Desktop/Isolated.png)
+![image](chat_db_flow.png)
 
 ## Overview
 ChatDB is an intelligent system designed to bridge the gap between natural language and database queries. It allows users to interact with databases using simple natural language commands, without requiring in-depth knowledge of SQL or NoSQL query syntax. This project focuses on enabling seamless access to both structured (SQL) and semi-structured (NoSQL) databases, making data retrieval more intuitive and user-friendly.
