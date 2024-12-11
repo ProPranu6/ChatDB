@@ -38,6 +38,7 @@ The primary challenge lies in handling the flexible structure of natural languag
 For more details, please refer to the following documents:
 - [Initial Project Proposal](https://docs.google.com/document/d/1LIhxhNNjjJuYYTX6u0cONyoX1thEeESxuwI5pzT27No/edit?usp=sharing)
 - [Mid-Progress Report](https://docs.google.com/document/d/1Yg6HRxdifWvS_QJRwJ7FEadRKbyaoDQ3uxtJpHb8Yg8/edit?usp=sharing)
+- [Final Report](https://docs.google.com/document/d/1gKjGhpAoElTKi9B7CRJOXY8aMHNmCQPl4IewmJI1rFk/edit?usp=sharing)
 - [BIRD Dataset](https://drive.google.com/file/d/1OwISGcBySjV1Hvhf3D8PWpt4r0-eRGVF/view?usp=sharing)
 
 ## Getting Started
