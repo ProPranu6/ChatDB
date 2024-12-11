@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatDB: Database and Query Interface</title>
+    <title>ChatDB49</title>
     <style>
-        /* Same styles as your original code */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -13,12 +12,14 @@
             background-color: #1e1e1e; /* Dark background */
             color: #e0e0e0; /* Light text */
         }
+
         header {
             background-color: #343541; /* Dark header */
             color: white;
             padding: 10px;
             text-align: center;
         }
+
         #chat-container {
             display: flex;
             flex-direction: column;
@@ -30,6 +31,7 @@
             border-radius: 8px;
             box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
         }
+
         #chat-box {
             height: 400px;
             overflow-y: auto;
@@ -37,17 +39,21 @@
             border-bottom: 1px solid #444;
             background-color: #333333; /* Darker message background */
         }
+
         .message {
             margin-bottom: 10px;
         }
+
         .user-message {
             text-align: right;
             color: #e0e0e0; /* Light text for user messages */
         }
+
         .bot-message {
             text-align: left;
             color: #d3d3d3; /* Light grey for bot message */
         }
+
         #chat-input {
             display: flex;
             flex-direction: column;
@@ -55,6 +61,7 @@
             border-top: 1px solid #444;
             background-color: #2e2e2e; /* Dark background for input */
         }
+
         #chat-input input,
         #chat-input select,
         #chat-input button {
@@ -65,12 +72,14 @@
             background-color: #444; /* Dark input fields */
             color: #e0e0e0; /* Light text for input */
         }
+
         #chat-input button {
             background-color: #555; /* Light grey button */
             color: white;
             border: none;
             cursor: pointer;
         }
+
         #chat-input button:hover {
             background-color: #666; /* Darker grey on hover */
         }
@@ -101,105 +110,119 @@
         const chatBox = document.getElementById("chat-box");
         let currentDbType = null; // Variable to store the current database type
         let uploadedFileName = ""; // Variable to store the uploaded file's name without extension
-
+        let tableName = ""; // Global variable to store the table name
+    
         // Append messages to the chatbox
         function appendMessage(message, sender) {
             const messageDiv = document.createElement("div");
             messageDiv.classList.add("message", sender === "user" ? "user-message" : "bot-message");
-
+    
             if (message.includes("Data")) {
                 messageDiv.innerText = message.replace(/(Data)/, '\n\n$1');
             } else {
                 messageDiv.innerText = message;
             }
-
+    
             chatBox.appendChild(messageDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-
+    
         // Handle database file upload
         async function handleFileUpload() {
             const dbType = document.getElementById("dbType").value;
             const dbFile = document.getElementById("dbFile").files[0];
-
+    
             if (!dbFile) {
                 appendMessage("Please select a file to upload.", "bot");
                 return;
             }
-
+    
             const fileName = dbFile.name.split('.').slice(0, -1).join('.');
             uploadedFileName = fileName;
-
+    
             const uploadUrl = dbType === "nosql" ? "/upload/nosql" : "/upload/sql";
             const formData = new FormData();
             formData.append("file", dbFile);
-
+    
             appendMessage(`Uploading ${dbFile.name} as ${dbType} database...`, "bot");
             try {
                 const response = await fetch(uploadUrl, {
                     method: "POST",
                     body: formData,
                 });
-
+    
                 const result = await response.json();
                 if (result.message) {
                     appendMessage(result.message, "bot");
                 } else {
                     appendMessage("Upload successful, but no message returned.", "bot");
                 }
-
+    
                 if (result.databases) {
                     appendMessage(`Available ${dbType} databases: ${result.databases.join(", ")}`, "bot");
                 }
-
+    
                 currentDbType = dbType;
             } catch (error) {
                 appendMessage("Error: Upload failed!", "bot");
             }
         }
-
+    
         // Handle sending a natural language query
         async function sendMessage() {
             const queryInput = document.getElementById("user-query");
             const userMessage = queryInput.value.trim();
-
+    
             if (!userMessage) {
                 appendMessage("Please enter a query.", "bot");
                 return;
             }
-
+    
             if (!currentDbType || !uploadedFileName) {
                 appendMessage("Please upload a database first.", "bot");
                 return;
             }
-
+    
             appendMessage(userMessage, "user");
             queryInput.value = ""; // Clear the input field
-
+    
+            // If the query starts with "Choose", set the table name
+            if (userMessage.toLowerCase().startsWith("choose")) {
+                tableName = userMessage.split(" ")[1]; // Extract table name
+                appendMessage(`Table name set to: ${tableName}`, "bot");
+                return;
+            }
+    
+            // Handle explore query
             if (userMessage.toLowerCase().startsWith("explore")) {
                 appendMessage("Exploring database schema...", "bot");
-
+    
                 try {
                     const dbPath = `${currentDbType.toUpperCase()}/${String(uploadedFileName)}`;
                     const payload = { db_path: dbPath };
-
+    
                     const response = await fetch("/schema", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload),
                     });
-
+    
                     const result = await response.json();
-                    const schemaString = typeof result.message === "object"
-                        ? JSON.stringify(result.message, null, 2)
-                        : result.message;
-
-                    appendMessage(schemaString, "bot");
+                    if (result.message) {
+                        const schemaString = typeof result.message === "object"
+                            ? JSON.stringify(result.message, null, 2)
+                            : result.message;
+    
+                        appendMessage(schemaString, "bot");
+                    } else {
+                        appendMessage("Schema exploration completed but no message returned.", "bot");
+                    }
                 } catch (error) {
                     console.error("Error during schema exploration:", error);
                     appendMessage("Error: Could not explore schema. Please try again.", "bot");
                 }
-            } else if (userMessage.toLowerCase().startsWith("example")) {
+            } 
+            else if (userMessage.toLowerCase().startsWith("example")) {
                 appendMessage("Fetching example queries...", "bot");
 
                 try {
@@ -223,48 +246,44 @@
                     console.error("Error during fetching example queries:", error);
                     appendMessage("Error: Could not fetch example queries. Please try again.", "bot");
                 }
-            } else {
+            }
+            else {
+                // Process other queries
                 appendMessage("Processing your query...", "bot");
-
+    
                 try {
                     const endpoint = currentDbType === "nosql" ? "/query/nosql" : "/query/sql";
                     const dbPath = `${currentDbType.toUpperCase()}/${String(uploadedFileName)}`;
-                    const tableName = extractTableName(userMessage);
-
+    
                     const payload = {
                         db_path: dbPath,
                         table: tableName,
                         query: userMessage,
                     };
-
+    
                     const response = await fetch(endpoint, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload),
                     });
-
+    
                     const result = await response.json();
-                    const resultString = typeof result.message === "object"
-                        ? JSON.stringify(result.message, null, 2)
-                        : result.message;
-
-                    appendMessage(resultString, "bot");
+                    if (result.message) {
+                        const resultString = typeof result.message === "object"
+                            ? JSON.stringify(result.message, null, 2)
+                            : result.message;
+    
+                        appendMessage(resultString, "bot");
+                    } else {
+                        appendMessage("Query processed successfully, but no message returned.", "bot");
+                    }
                 } catch (error) {
                     console.error("Error during query processing:", error);
                     appendMessage("Error: Could not process the query. Please try again.", "bot");
                 }
             }
         }
-
-        // Extract table name from the query
-        function extractTableName(query) {
-            const fromIndex = query.toLowerCase().indexOf("from");
-            if (fromIndex !== -1) {
-                const tableName = query.slice(fromIndex + 4).trim().split(" ")[0];
-                return tableName;
-            }
-            return "";
-        }
     </script>
+    
 </body>
 </html>
