@@ -702,7 +702,8 @@ class SQLToMongoConverter:
             "<": "$lt",
             ">=": "$gte",
             "<=": "$lte",
-            "=": "$eq"
+            "=": "$eq",
+            "!=": "$ne"
         }
 
     def parse_value(self, value: str) -> Union[int, float, str]:
