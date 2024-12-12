@@ -134,7 +134,7 @@ To run the project locally, follow these steps:
 
 Access the User Interface at the URL: [127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
 
-4. ** Execution:**
+4. **Execution:**
 The following steps need to be followed in order to completely utilize ChatDB's functionalities:
    - Select NoSQL or SQL from the dropdown menu according to the database you wish to upload
    - Upload a .zip (for NoSQL) or .sql/.csv/.sqlite (for SQL) file of the database
