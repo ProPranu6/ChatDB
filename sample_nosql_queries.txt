@@ -1,0 +1,57 @@
+constructorStandings
+- where points = 7 in constructorStandings, get the minimum position
+- get me a summation of wins in `constructor standings` where position placed is > 3 grouped by constructorid
+- extract all distinct raceids happned in constructiorstandings
+- get maximum points that is scored, grouped by constructorid from constructorstandings
+
+circuits
+- Fetch the minimum long from circuits, ordered by lat.
+- Fetch the variance in long from circuits where circuitId > 50
+- find all distinct locations grouped by country in circuits
+- find mean lat of circuits where the host country is = 'France'
+
+constructors
+- Fetch _id from constructors.
+- find the nationality and the name of the car from constructors info
+- for where car name is = 'Ferrari', get me its website url from the constructors table
+- find what are all the names of the cars where nationality is = 'Italian' in constructors
+
+races
+- get me circuitids of all races where the rounds that happened there are > 10
+- From races, what cna you get as the smallest time for where the name of the venue is = 'Australian Grand Prix'
+- From races, get me the maximum rounds happened where the venue is named = 'Monaco Grand Prix'
+- Find me the website ursl for all races where they happened in year = 2009 and group them by name of venue
+
+customers
+- Fetch unique values of CustomerID from Customers where segment = 'SME'.
+- Fetch unique values of CustomerID from customers where Currency = 'EUR'.
+
+gasstations
+- Fetch unique values of ChainID from gasstations where Segment = 'Premium'.
+- Get unique values of GasStationID from gasstations where Country = 'CZE'.
+
+products
+- Get Description from products where ProductID = 5.
+
+transactions_1k
+- Fetch the minimum Price from transactions_1k.
+- Fetch the variance in Amount from transactions_1k where Price > 100.
+- Get CardID from transactions_1k.
+
+satscores
+- Grab AvgScrMath from the satscores dataset where cds = '1100170000000'.
+- Pick NumTstTakr out of satscores where cname = 'Alameda'.
+- Get distinct cds values from satscores.
+- Retrieve unique rtype values from satscores where AvgScrRead > 500.
+
+frpm
+- Pull out `School Name` from frpm where CDSCode = '01100170109835'.
+- Extract `Percent (%) Eligible FRPM (Ages 5-17)` from frpm where `School Name` = 'Envision Academy for Arts & Technology'.
+- Fetch all distinct `Charter School Numbers` in frpm.
+- Grab distinct `School Type` from frpm where `Percent (%) Eligible Free (K-12)` > 0.5.
+
+schools
+- Fetch AdmEmail1 from schools where CDSCode = '01100170000000'.
+- Extract CharterNum from schools where Charter = 1.
+- Select distinct District names from schools.
+- Pull unique StatusType values from schools where State = 'CA'.

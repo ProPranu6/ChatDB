@@ -1,0 +1,41 @@
+Examination
+- From the examimation, what can you find as the average ANA for where Thrombosis = 1
+- According to examinations data, what can you get as the diagnosis to be used for where sympotms = 'AMI'
+- get me all the distinct symptoms found and their `ANA Pattern`, according to the examinations, where thrombosis = 3 grouping it by `ANA Pattern`
+- find me all the `examination dates` from the examination records for where `aCL IgM` > 10
+
+Laboratory
+- get me the maximum value for GOT, CRP from the laboratory records where GOT > 100 and group this by CRP.
+- Get the average of CPK where TG > 100 from Laboratory.
+- Retrieve the average value of ALB where HGB > 12 from Laboratory.
+- Get the total count of RBC where T-BIL > 0.2 in Laboratory.
+- Fetch the range of UA values where CRP = 2 in Laboratory.
+- Retrieve the minimum value of ALP where ALP > 15 in Laboratory.
+
+Patient
+- From the patient records, where sex of person is = 'M' get me his bitrthday
+- Get me the id of patients where their `first date` is < '1985-10-01' and group this by diagnosis results.
+- In the ecords, find diagnosis of patients grouped by their sex.
+
+superhero
+- Fetch superhero_name values from superhero where full_name = 'Charles Chandler'.
+- Get all unique values of full_name where gender_id = 1 from superhero
+- Fetch superhero_name values where heigh_cm > 190 from superhero.
+
+Leagues
+- Get the total count of leagues where country_id > 10000 from Leagues.
+- Fetch unique country_ids from Leagues.
+- Fetch distinct league names where country_id = 7809 in Leagues.
+- Retrieve the id of the league where country_id = 1729 in Leagues.
+
+Players
+- Get the player_name where id = 1 from Players.
+- Retrieve the height of the player where player_name = 'Aaron Cresswell' in Players.
+- Fetch unique player_fifa_api_id values from Players.
+- Fetch distinct birthdays where weight = 187 in Players.
+
+Teams
+- Get the team_long_name where id = 1 from Teams.
+- Retrieve the team_short_name where team_fifa_api_id = 675 in Teams.
+- Fetch unique team_api_id values from Teams.
+- Fetch distinct team_fifa_api_id where team_long_name = 'Beerschot AC' in Teams.
