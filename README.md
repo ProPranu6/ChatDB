@@ -113,6 +113,17 @@ Sample output for NoSQL schema description.
 ### `sample_nosql_querygen.txt`
 Sample output for NoSQL query generation.
 
+---
+
+### `sample_nosql_queries.txt`
+Sample NoSQL queries for testing arranged collection-wise.
+
+---
+
+### `sample_sql_queries.txt`
+Sample SQL queries for testing arranged table-wise.
+
+
 
 ## Getting Started
 To run the project locally, follow these steps:
@@ -142,6 +153,7 @@ The following steps need to be followed in order to completely utilize ChatDB's 
    - Typing a query that contains the word "Example", will result in ChatDB providing sample queries (SQL/NoSQL depending on chosen database type)
    - To choose a table in a database, execute the query "Choose (table name)"
    - After choosing the table, we can enter queries in natural language and get the respective SQL or NoSQL queries for it as well as the results of the query being executed on the data. Note: multi-word columns should be enclosed within backticks "`"
+*Ref:For sample queries to test please refer sections ![SampleSQL](###`sample_sql_queries.txt`)* 
 
 Given below is an example of a query being executed:
 ![image](example_query.png)
