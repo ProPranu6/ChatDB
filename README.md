@@ -127,11 +127,20 @@ To run the project locally, follow these steps:
    cd <repository-directory>
    pip install -r requirements.txt
 
-3. **Setup and Execution:**
+3. **Setup:**
    ```bash
    fastapi run hood.py
    
 
 Access the User Interface at the URL: [127.0.0.1:8000/static/index.html](http://127.0.0.1:8000/static/index.html)
-
+4. ** Execution:**
+The following steps need to be followed in order to completely utilize ChatDB's functionalities:
+   - Select NoSQL or SQL from the dropdown menu according to the database you wish to upload
+   - Upload a .zip (for NoSQL) or .sql/.csv/.sqlite (for SQL) file of the database
+   - Enter a query that has the word "Explore" in order to perform data exploration
+   - Typing a query that contains the word "Example", will result in ChatDB providing sample queries (SQL/NoSQL depending on chosen database type)
+   - To choose a table in a database, execute the query "Choose (table name)"
+   - After choosing the table, we can enter queries in natural language and get the respective SQL or NoSQL queries for it as well as the results of the query being executed on the data. Note: multi-word columns should be written in the following manner: "`multi word`"
+Given below is an example of a query being executed:
+![image](example_query.png)
 
